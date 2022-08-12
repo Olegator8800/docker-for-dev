@@ -1,0 +1,20 @@
+version: '3.3'
+
+networks:
+  default:
+    external:
+      name: ##yourcompany##
+
+services:
+  whoami:
+    image: containous/whoami
+    container_name: simple-service
+    restart: 'no'
+    networks:
+      default:
+        aliases:
+          - test.##yourcompany##.lc
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.rule=Host(`test.##yourcompany##.lc`)
+      - traefik.http.routers.whoami.entrypoints=web

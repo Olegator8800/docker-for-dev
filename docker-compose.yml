@@ -1,0 +1,49 @@
+version: '3.3'
+
+networks:
+  default:
+    external:
+      name: ##yourcompany##
+
+services:
+  traefik:
+    image: traefik
+    container_name: traefik
+    restart: always
+    command:
+      # - --log.level=DEBUG
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - 80:80
+      - 8080:8080
+    labels:
+      - traefik.http.routers.traefik.rule=Host(`traefik.##yourcompany##.lc`)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    logging:
+      driver: none
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.adminer.rule=Host(`adminer.##yourcompany##.lc`)
+      - traefik.http.routers.adminer.entrypoints=web
+
+  openApiEditor:
+    image: swaggerapi/swagger-editor
+    container_name: openApiEditor
+    restart: always
+    logging:
+      driver: none
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.openApiEditor.rule=Host(`api-editor.##yourcompany##.lc`)
+      - traefik.http.routers.openApiEditor.entrypoints=web
+    volumes:
+      - $PWD/build/swagger-editor/nginx.conf:/etc/nginx/nginx.conf

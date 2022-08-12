@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+export USER_ID=$(id -u)
+export GROUP_ID=$(id -g)
+
+docker network create ##yourcompany##
+
+docker-compose build
+
+docker-compose up -d --force-recreate --remove-orphans
+docker-compose logs -f
